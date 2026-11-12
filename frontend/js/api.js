@@ -1,5 +1,5 @@
 
-const API_BASE_URL = "http://localhost:8080/api/v1";
+const API_BASE_URL = "https://shelfserve-backend.onrender.com/api/v1";
 
 const ShelfSenseAPI = {
     async request(endpoint, options = {}) {
