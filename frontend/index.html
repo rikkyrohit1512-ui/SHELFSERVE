@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShelfSense - Smart Library Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="role-admin">
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            <line x1="12" y1="6" x2="16" y2="6"></line>
+            <line x1="12" y1="10" x2="16" y2="10"></line>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h2>ShelfSense</h2>
+          <span class="badge-academic">Smart LMS • B.Tech</span>
+        </div>
+        <button class="btn-sidebar-close" id="btnSidebarClose" aria-label="Close Sidebar">&times;</button>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="nav-menu">
+        <div class="nav-section-title">MAIN NAVIGATION</div>
+        <button class="nav-item active" data-tab="dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+            <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+            <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+            <rect x="3" y="16" width="7" height="5" rx="1"></rect>
+          </svg>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-item" data-tab="catalogue">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span>Book Catalogue</span>
+        </button>
+
+        <button class="nav-item" data-tab="shelf-map">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+            <line x1="8" y1="2" x2="8" y2="18"></line>
+            <line x1="16" y1="6" x2="16" y2="22"></line>
+          </svg>
+          <span>Shelf Map</span>
+        </button>
+
+        <button class="nav-item admin-only" data-tab="circulation">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 3h5v5"></path>
+            <path d="M4 20L21 3"></path>
+            <path d="M21 16v5h-5"></path>
+            <path d="M15 15l6 6"></path>
+            <path d="M4 4l5 5"></path>
+          </svg>
+          <span>Circulation Desk</span>
+          <span class="nav-badge" id="overdueCountBadge">0</span>
+        </button>
+
+        <button class="nav-item admin-only" data-tab="members">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>Member Directory</span>
+        </button>
+
+        <button class="nav-item admin-only" data-tab="reports">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <span>Reports & Analytics</span>
+        </button>
+
+        <div class="nav-section-title student-only">STUDENT PORTAL</div>
+        <button class="nav-item student-only" data-tab="my-books">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+          <span>My Borrowed Books</span>
+          <span class="nav-badge" id="studentOverdueBadge">0</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer / System Status -->
+      <div class="sidebar-footer">
+        <div class="system-mode-card">
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span class="status-text">Phase 1: Mock State Active</span>
+          </div>
+          <p class="mode-desc">Client-side verified state. Ready for Phase 2 Spring Boot & MySQL.</p>
+          <button class="btn-reset-data" id="btnResetData" title="Reset sample books and member transactions">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+              <path d="M21 3v5h-5"></path>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+              <path d="M3 21v-5h5"></path>
+            </svg>
+            Reset Demo Data
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="btn-sidebar-toggle" id="btnSidebarToggle" aria-label="Toggle Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="page-title-group">
+            <h1 id="currentPageTitle">Dashboard Overview</h1>
+            <p id="currentPageSubtitle">Centralized control center for institutional library operations</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Role Switcher (Simulating Role-Based Access Control) -->
+          <div class="role-switcher-container">
+            <span class="role-label">Active Role:</span>
+            <div class="role-selector">
+              <button class="role-pill active" id="roleAdminBtn" data-role="ADMIN">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                </svg>
+                Librarian (Admin)
+              </button>
+              <button class="role-pill" id="roleStudentBtn" data-role="STUDENT">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Student (Member)
+              </button>
+            </div>
+          </div>
+
+          <!-- User Profile Brief -->
+          <div class="user-profile-widget">
+            <div class="avatar" id="userAvatar">AD</div>
+            <div class="user-meta">
+              <span class="user-name" id="userNameDisplay">Dr. Arvind Sharma</span>
+              <span class="user-role" id="userRoleDisplay">Head Librarian</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Dynamic View Container -->
+      <main class="content-container">
+        
+        <!-- ==============================================
+             1. DASHBOARD VIEW
+             ============================================== -->
+        <section class="tab-view active" id="view-dashboard">
+          <!-- Overdue Alert Banner (Admin View) -->
+          <div class="alert-banner warning admin-only" id="overdueAlertBanner" style="display: none;">
+            <div class="alert-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <div class="alert-content">
+              <strong>Attention Required:</strong> You have <span id="overdueCountText">0</span> overdue book(s) awaiting return or penalty collection.
+            </div>
+            <button class="btn btn-sm btn-outline-warning" onclick="app.switchTab('circulation', 'overdue')">View Defaulters</button>
+          </div>
+
+          <!-- Overdue Alert Banner (Student View) -->
+          <div class="alert-banner warning student-only" id="studentOverdueAlertBanner" style="display: none;">
+            <div class="alert-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <div class="alert-content">
+              <strong>Academic Overdue Notice:</strong> You have <span id="studentOverdueCountText">0</span> overdue book(s) past the 14-day lending period.
+            </div>
+            <button class="btn btn-sm btn-outline-warning" onclick="app.switchTab('my-books')">View My Loans</button>
+          </div>
+
+          <!-- Key Performance Metric Cards (Admin) -->
+          <div class="metrics-grid admin-only">
+            <div class="metric-card">
+              <div class="metric-icon-box teal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Total Titles & Copies</span>
+                <div class="metric-value-row">
+                  <h3 id="statTotalBooks">0</h3>
+                  <span class="metric-sub" id="statTotalCopies">0 copies</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box green">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Available on Shelf</span>
+                <div class="metric-value-row">
+                  <h3 id="statAvailableBooks">0</h3>
+                  <span class="metric-sub text-success" id="statAvailabilityRate">0% in stock</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box blue">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Currently Issued</span>
+                <div class="metric-value-row">
+                  <h3 id="statIssuedBooks">0</h3>
+                  <span class="metric-sub">Active borrowings</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box red">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Overdue Returns</span>
+                <div class="metric-value-row">
+                  <h3 id="statOverdueBooks" class="text-danger">0</h3>
+                  <span class="metric-sub text-danger" id="statPendingFines">₹0 fine pending</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Performance Metric Cards (Student View) -->
+          <div class="metrics-grid student-only">
+            <div class="metric-card">
+              <div class="metric-icon-box blue">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">My Active Loans</span>
+                <div class="metric-value-row">
+                  <h3 id="studentStatActiveLoans">0</h3>
+                  <span class="metric-sub" id="studentStatQuota">of 3 allowed</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box red">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Overdue Deadlines</span>
+                <div class="metric-value-row">
+                  <h3 id="studentStatOverdueCount" class="text-danger">0</h3>
+                  <span class="metric-sub text-danger">Requires immediate return</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box teal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Outstanding Penalty</span>
+                <div class="metric-value-row">
+                  <h3 id="studentStatPendingFine">₹0.00</h3>
+                  <span class="metric-sub">Payable at circulation desk</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box green">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Library Titles In Stock</span>
+                <div class="metric-value-row">
+                  <h3 id="studentStatTotalTitles">0</h3>
+                  <span class="metric-sub text-success">Browse catalogue</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Bar (Admin Only) -->
+          <div class="action-toolbar admin-only">
+            <button class="btn btn-primary" onclick="app.openModal('modalAddBook')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add New Book
+            </button>
+            <button class="btn btn-secondary" onclick="app.openModal('modalIssueBook')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 3h5v5"></path>
+                <path d="M4 20L21 3"></path>
+              </svg>
+              Issue Book
+            </button>
+            <button class="btn btn-secondary" onclick="app.openModal('modalAddMember')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
+              </svg>
+              Register Member
+            </button>
+          </div>
+
+          <!-- Dashboard Grid: Recent Circulation & Category Breakdown -->
+          <div class="dashboard-two-col">
+            <!-- Recent Transactions Table Card -->
+            <div class="card card-table">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title" id="recentCirculationHeaderTitle">Recent Circulation Activity</h3>
+                  <p class="card-subtitle" id="recentCirculationHeaderSub">Real-time log of book borrowings and returns</p>
+                </div>
+                <button class="btn-text admin-only" onclick="app.switchTab('circulation')">View All Circulation &rarr;</button>
+                <button class="btn-text student-only" onclick="app.switchTab('my-books')">View My Borrowings &rarr;</button>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Transaction ID</th>
+                      <th>Book Title</th>
+                      <th>Member</th>
+                      <th>Issue Date</th>
+                      <th>Due Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboardTransactionsBody">
+                    <!-- Populated dynamically by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Library Collection Distribution by Category -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Departmental Inventory</h3>
+                  <p class="card-subtitle">Distribution of books across academic disciplines</p>
+                </div>
+              </div>
+              <div class="category-breakdown-list" id="categoryBreakdownList">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             2. BOOK CATALOGUE VIEW
+             ============================================== -->
+        <section class="tab-view" id="view-catalogue">
+          <div class="filter-bar card">
+            <div class="search-input-group">
+              <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="catalogueSearchInput" placeholder="Search by title, author, ISBN (with/without hyphens) or subject..." />
+            </div>
+
+            <div class="filter-actions">
+              <select id="catalogueCategoryFilter" class="form-select">
+                <option value="ALL">All Categories</option>
+                <!-- Populated by JS -->
+              </select>
+
+              <select id="catalogueStatusFilter" class="form-select">
+                <option value="ALL">All Stock Status</option>
+                <option value="AVAILABLE">Available Now</option>
+                <option value="OUT_OF_STOCK">All Copies Issued</option>
+              </select>
+
+              <button class="btn btn-primary admin-only" onclick="app.openModal('modalAddBook')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add Book
+              </button>
+            </div>
+          </div>
+
+          <!-- Catalogue Cards Grid -->
+          <div class="catalogue-grid" id="catalogueGrid">
+            <!-- Dynamic cards populated by JS -->
+          </div>
+        </section>
+
+        <!-- ==============================================
+             2B. INTERACTIVE SHELF MAP VIEW
+             ============================================== -->
+        <section class="tab-view" id="view-shelf-map">
+          <!-- Shelf Map Header & Controls -->
+          <div class="map-controls-card card">
+            <div class="map-controls-left">
+              <div class="floor-selector-group">
+                <span class="control-label">Select Floor:</span>
+                <div class="floor-pill-container" id="floorPillContainer">
+                  <button class="floor-pill active" data-floor="Ground Floor" onclick="app.switchFloor('Ground Floor')">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                      <line x1="3" y1="9" x2="21" y2="9"></line>
+                      <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                    Ground Floor (Main Stacks)
+                  </button>
+                  <button class="floor-pill" data-floor="1st Floor" onclick="app.switchFloor('1st Floor')">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                      <line x1="3" y1="9" x2="21" y2="9"></line>
+                      <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                    1st Floor (Research & Digital)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="map-controls-right">
+              <div class="map-search-group">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="mapBookSearchInput" placeholder="Locate book by title, author, or ISBN on map..." oninput="app.handleMapSearch(this.value)" autocomplete="off" />
+                <button class="btn-clear-search" id="btnMapClearSearch" onclick="app.clearMapSearch()" style="display: none;" title="Clear search">&times;</button>
+                <div class="map-search-dropdown" id="mapSearchDropdown" style="display: none;">
+                  <!-- Live search results list -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Shelf Map Layout: Visual Floor Plan + Details/Directions Panel -->
+          <div class="shelf-map-layout">
+            <!-- Left: Interactive Floor Plan Canvas -->
+            <div class="floor-canvas-card card">
+              <div class="canvas-header">
+                <div>
+                  <h3 class="canvas-title" id="canvasFloorTitle">Ground Floor Plan</h3>
+                  <p class="canvas-subtitle" id="canvasFloorSubtitle">Click any rack to inspect contents or search for titles</p>
+                </div>
+                <div class="canvas-legend">
+                  <span class="legend-item"><span class="legend-box rack-legend"></span> Book Rack</span>
+                  <span class="legend-item"><span class="legend-box reading-legend"></span> Reading Hall</span>
+                  <span class="legend-item"><span class="legend-box reception-legend"></span> Reception</span>
+                  <span class="legend-item"><span class="legend-box aisle-legend"></span> Central Aisle</span>
+                </div>
+              </div>
+
+              <div class="floor-svg-viewport">
+                <div id="floorPlanSvgWrapper">
+                  <!-- Injected SVG map generated by app.renderFloorMapSvg() -->
+                </div>
+              </div>
+
+              <div class="canvas-footer">
+                <div class="entrance-indicator">
+                  <span class="entrance-pulse"></span>
+                  <span id="mapEntranceNameDisplay">Main South Entrance & Turnstiles</span>
+                </div>
+                <div class="canvas-hint">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                  <span>Hover to identify subjects • Click rack to lock details</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Book Location & Directions Details Panel -->
+            <div class="rack-details-card card" id="rackDetailsPanel">
+              <!-- Populated dynamically by app.renderRackDetails() -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             3. CIRCULATION DESK (ADMIN ONLY)
+             ============================================== -->
+        <section class="tab-view" id="view-circulation">
+          <div class="sub-nav-tabs">
+            <button class="sub-tab active" data-subtab="all-issues">Active & Past Issues</button>
+            <button class="sub-tab" data-subtab="overdue-only">
+              Overdue & Defaulters
+              <span class="badge badge-danger" id="circulationOverdueBadge">0</span>
+            </button>
+          </div>
+
+          <div class="card card-table">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title" id="circulationTableTitle">Active Library Circulations</h3>
+                <p class="card-subtitle">Manage checkouts, checkins, renewals and overdue penalties</p>
+              </div>
+              <div class="card-header-actions">
+                <button class="btn btn-primary" onclick="app.openModal('modalIssueBook')">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  New Issue
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Loan ID</th>
+                    <th>Book Info</th>
+                    <th>Member Info</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Overdue / Fine</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="circulationTableBody">
+                  <!-- Dynamic rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             4. MEMBERS DIRECTORY (ADMIN ONLY)
+             ============================================== -->
+        <section class="tab-view" id="view-members">
+          <div class="filter-bar card">
+            <div class="search-input-group">
+              <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="memberSearchInput" placeholder="Search by name, student roll no, email, or department..." />
+            </div>
+
+            <div class="filter-actions">
+              <select id="memberRoleFilter" class="form-select">
+                <option value="ALL">All Member Types</option>
+                <option value="STUDENT">B.Tech Students</option>
+                <option value="FACULTY">Faculty / Staff</option>
+              </select>
+
+              <button class="btn btn-primary" onclick="app.openModal('modalAddMember')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Register Member
+              </button>
+            </div>
+          </div>
+
+          <div class="card card-table">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Member ID</th>
+                    <th>Full Name</th>
+                    <th>Type & Department</th>
+                    <th>Contact Info</th>
+                    <th>Current Loans</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="membersTableBody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             5. REPORTS & ANALYTICS (ADMIN ONLY)
+             ============================================== -->
+        <section class="tab-view" id="view-reports">
+          <div class="reports-header-card card">
+            <div>
+              <h3>Institutional Library Analytics & Audit Reports</h3>
+              <p>Generate summary audits, stock verification sheets, and overdue collections records for accreditation (NBA / NAAC).</p>
+            </div>
+            <div class="reports-actions">
+              <button class="btn btn-outline" onclick="window.print()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                  <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                Print Official Audit Report
+              </button>
+            </div>
+          </div>
+
+          <div class="reports-grid">
+            <div class="report-box card">
+              <h4>Book Inventory Summary</h4>
+              <p class="report-box-desc">Comprehensive count of titles, total volume copies, and shelf availability status.</p>
+              <div class="report-stat-list" id="reportInventorySummary">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <div class="report-box card">
+              <h4>Circulation Statistics</h4>
+              <p class="report-box-desc">Total circulation transactions, active borrows, returned records, and renewal frequency.</p>
+              <div class="report-stat-list" id="reportCirculationSummary">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <div class="report-box card">
+              <h4>Penalty & Defaulter Audit</h4>
+              <p class="report-box-desc">Institutional fines ledger: assessed penalties, collected funds, and unpaid defaulter balance.</p>
+              <div class="report-stat-list" id="reportFineSummary">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             6. STUDENT / MEMBER VIEW (STUDENT ROLE ONLY)
+             ============================================== -->
+        <section class="tab-view" id="view-my-books">
+          <div class="card card-table">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">My Issued Books & Loan History</h3>
+                <p class="card-subtitle">Track your borrowed titles, return deadlines, and pending fine slips</p>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Loan ID</th>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Fine Status</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="studentLoansTableBody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       SHELFSENSE SMART ASSISTANT WIDGET
+       ============================================== -->
+  <button class="assistant-launcher" id="assistantLauncher" onclick="app.toggleAssistant()" title="Ask ShelfSense Assistant">
+    <span class="assistant-pulse-dot"></span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    <span>ShelfSense Assistant</span>
+  </button>
+
+  <div class="assistant-card" id="assistantCard">
+    <div class="assistant-header">
+      <div class="assistant-header-info">
+        <div class="assistant-avatar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <div>
+          <h4>ShelfSense Assistant</h4>
+          <span class="assistant-status"><span class="dot-online"></span> Smart Library AI Guide</span>
+        </div>
+      </div>
+      <button class="btn-close-assistant" onclick="app.toggleAssistant()" aria-label="Close Assistant">&times;</button>
+    </div>
+    
+    <div class="assistant-body" id="assistantMessages">
+      <!-- Populated dynamically by JS -->
+    </div>
+
+    <div class="assistant-chips" id="assistantChips">
+      <button class="chip" onclick="app.sendAssistantChip('Available Books')">📚 Available Books</button>
+      <button class="chip" onclick="app.sendAssistantChip('Borrowing Rules')">📋 Borrowing Rules</button>
+      <button class="chip" onclick="app.sendAssistantChip('Check Overdue Fines')">⚠️ Check Fines</button>
+      <button class="chip" onclick="app.sendAssistantChip('Locate Algorithms')">🔍 Locate Algorithms</button>
+      <button class="chip" onclick="app.sendAssistantChip('How to Renew')">🔄 How to Renew</button>
+    </div>
+
+    <form class="assistant-input-bar" id="assistantForm" onsubmit="app.handleAssistantSubmit(event)">
+      <input type="text" id="assistantInput" placeholder="Ask about books, shelf locations, fines..." autocomplete="off" />
+      <button type="submit" class="btn-assistant-send" aria-label="Send query">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </form>
+  </div>
+
+  <!-- ==============================================
+       MODALS
+       ============================================== -->
+
+  <!-- 1. Modal: Add / Edit Book -->
+  <div class="modal-backdrop" id="modalAddBook">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalBookTitle">Add New Book to Catalogue</h3>
+        <button class="btn-close-modal" onclick="app.closeModal('modalAddBook')">&times;</button>
+      </div>
+      <form id="formAddBook" onsubmit="app.Book(event)">
+        <input type="hidden" id="bookFormId" value="" />
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="bookTitleInput">Book Title *</label>
+              <input type="text" id="bookTitleInput" class="form-control" required placeholder="e.g. Introduction to Algorithms" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="bookIsbnInput">ISBN-13 *</label>
+              <input type="text" id="bookIsbnInput" class="form-control" required placeholder="978-0262033848" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="bookAuthorInput">Author(s) *</label>
+              <input type="text" id="bookAuthorInput" class="form-control" required placeholder="e.g. Thomas H. Cormen" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="bookCategoryInput">Category / Subject *</label>
+              <select id="bookCategoryInput" class="form-select" required>
+                <option value="Computer Science">Computer Science & IT</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Electronics & Communication">Electronics & Communication</option>
+                <option value="Mathematics">Applied Mathematics</option>
+                <option value="Physics">Engineering Physics</option>
+                <option value="Management & Humanities">Management & Humanities</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="bookPublisherInput">Publisher</label>
+              <input type="text" id="bookPublisherInput" class="form-control" placeholder="e.g. MIT Press" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="bookYearInput">Publication Year</label>
+              <input type="number" id="bookYearInput" class="form-control" min="1950" max="2026" value="2022" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="bookCopiesInput">Total Copies *</label>
+              <input type="number" id="bookCopiesInput" class="form-control" min="1" max="100" value="5" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bookLocationInput">Shelf / Rack Location</label>
+            <input type="text" id="bookLocationInput" class="form-control" placeholder="e.g. Stack A, Rack 3, Tier 2" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="app.closeModal('modalAddBook')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnSaveBookSubmit">Save Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Modal: Issue Book -->
+  <div class="modal-backdrop" id="modalIssueBook">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Issue Book to Member</h3>
+        <button class="btn-close-modal" onclick="app.closeModal('modalIssueBook')">&times;</button>
+      </div>
+      <form id="formIssueBook" onsubmit="app.handleIssueBook(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="issueMemberSelect">Select Member *</label>
+            <select id="issueMemberSelect" class="form-select" required>
+              <option value="">-- Choose Member --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="issueBookSelect">Select Available Book *</label>
+            <select id="issueBookSelect" class="form-select" required>
+              <option value="">-- Choose Book --</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="issueDateInput">Issue Date</label>
+              <input type="date" id="issueDateInput" class="form-control" required />
+            </div>
+            <div class="form-group flex-1">
+              <label for="dueDateInput">Due Date (Standard 14 Days)</label>
+              <input type="date" id="dueDateInput" class="form-control" required />
+            </div>
+          </div>
+
+          <div class="callout-info">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <div>
+              <strong>Academic Circulation Policy:</strong> Late return fine is charged at ₹5.00 / day beyond the due date. Maximum 3 simultaneous loans allowed per student.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="app.closeModal('modalIssueBook')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Complete Book Issue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Modal: Return Book & Calculate Fine -->
+  <div class="modal-backdrop" id="modalReturnBook">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Process Book Return</h3>
+        <button class="btn-close-modal" onclick="app.closeModal('modalReturnBook')">&times;</button>
+      </div>
+      <form id="formReturnBook" onsubmit="app.handleConfirmReturn(event)">
+        <input type="hidden" id="returnTransactionId" value="" />
+        <div class="modal-body">
+          <div class="return-summary-card" id="returnSummaryCard">
+            <!-- Dynamically filled with book, student, due date and fine breakdown -->
+          </div>
+
+          <div class="form-group">
+            <label for="returnDateInput">Actual Return Date</label>
+            <input type="date" id="returnDateInput" class="form-control" onchange="app.recalculateReturnFine()" required />
+          </div>
+
+          <div class="fine-display-box" id="returnFineBox">
+            <div class="fine-title">Overdue Penalty Assessed:</div>
+            <div class="fine-amount" id="returnFineAmount">₹0.00</div>
+            <div class="fine-subtext" id="returnFineSubtext">On-time return. No penalty charged.</div>
+          </div>
+
+          <div class="form-group" id="fineSettlementGroup" style="display: none;">
+            <label class="checkbox-container">
+              <input type="checkbox" id="fineCollectedCheckbox" checked />
+              <span class="checkmark"></span>
+              Mark penalty fine as collected and issue receipt
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="app.closeModal('modalReturnBook')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm Book Return</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Modal: Register Member -->
+  <div class="modal-backdrop" id="modalAddMember">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalMemberTitle">Register New Institutional Member</h3>
+        <button class="btn-close-modal" onclick="app.closeModal('modalAddMember')">&times;</button>
+      </div>
+      <form id="formAddMember" onsubmit="app.handleSaveMember(event)">
+  <input type="hidden" id="memberFormId" value="">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="memberNameInput">Full Name *</label>
+              <input type="text" id="memberNameInput" class="form-control" required placeholder="e.g. Rahul Sharma" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="memberRoleSelect">Member Type *</label>
+              <select id="memberRoleSelect" class="form-select" required>
+                <option value="STUDENT">B.Tech Student</option>
+                <option value="FACULTY">Faculty / Professor</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="memberRollInput">Roll Number / Staff ID *</label>
+              <input type="text" id="memberRollInput" class="form-control" required placeholder="e.g. 21BCSE042" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="memberDeptInput">Department *</label>
+              <select id="memberDeptInput" class="form-select" required>
+                <option value="Computer Science & Engineering">Computer Science & Engg</option>
+                <option value="Electronics & Communication">Electronics & Comm</option>
+                <option value="Mechanical Engineering">Mechanical Engg</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="memberEmailInput">Institutional Email *</label>
+              <input type="email" id="memberEmailInput" class="form-control" required placeholder="student@college.edu" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="memberPhoneInput">Contact Phone</label>
+              <input type="tel" id="memberPhoneInput" class="form-control" placeholder="+91 98765 43210" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="app.closeModal('modalAddMember')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="memberSubmitBtn">Register Member</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: View Member Details -->
+  <div class="modal-backdrop" id="modalViewMember" role="dialog" aria-modal="true" aria-labelledby="modalViewMemberTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalViewMemberTitle">Member Details</h3>
+        <button type="button" class="btn-close-modal" aria-label="Close member details" onclick="app.closeModal('modalViewMember')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="memberDetailsMessage" role="status">Loading member details...</p>
+        <div id="memberDetailsContent" hidden>
+          <div class="member-detail-grid">
+            <div class="member-detail-item"><span>Member ID</span><strong id="viewMemberCode"></strong></div>
+            <div class="member-detail-item"><span>Name</span><strong id="viewMemberName"></strong></div>
+            <div class="member-detail-item"><span>Roll / Staff ID</span><strong id="viewMemberRollNo"></strong></div>
+            <div class="member-detail-item"><span>Member Type</span><strong id="viewMemberRole"></strong></div>
+            <div class="member-detail-item"><span>Department</span><strong id="viewMemberDepartment"></strong></div>
+            <div class="member-detail-item"><span>Email</span><strong id="viewMemberEmail"></strong></div>
+            <div class="member-detail-item"><span>Phone</span><strong id="viewMemberPhone"></strong></div>
+            <div class="member-detail-item"><span>Registration Date</span><strong id="viewMemberRegistrationDate"></strong></div>
+            <div class="member-detail-item"><span>Membership Status</span><strong id="viewMemberStatus"></strong></div>
+            <div class="member-detail-item"><span>Maximum Loans</span><strong id="viewMemberMaxLoans"></strong></div>
+          </div>
+          <h4>Borrowing Information</h4>
+          <p><strong id="viewMemberActiveLoans">0</strong> current borrowing(s)</p>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr><th>Book</th><th>Loan ID</th><th>Issued</th><th>Due</th><th>Returned</th><th>Status</th></tr>
+              </thead>
+              <tbody id="memberLoansTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="app.closeModal('modalViewMember')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Scripts -->
+  <script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

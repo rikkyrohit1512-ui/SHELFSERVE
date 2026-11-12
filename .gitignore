@@ -1,0 +1,33 @@
+﻿# Java build files
+target/
+**/target/
+*.class
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+**/application-local.properties
+**/application-prod.properties
+**/application-local.yml
+**/application-prod.yml
+*.pem
+*.key
+
+# Database backups
+*.sql
+*.sql.gz
+*.dump
+
+# Dependencies
+node_modules/
+dist/
+
+# IDE and temporary files
+.vscode/
+.idea/
+*.log
+.DS_Store
+Thumbs.db
+
+/shelfsense/
