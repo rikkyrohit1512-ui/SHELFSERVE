@@ -1,14 +1,30 @@
 
-const API_BASE_URL = "https://shelfserve-backend.onrender.com/api/v1";
 
+const API_BASE_URL = "http://localhost:8080/api/v1";
 const ShelfSenseAPI = {
-    async request(endpoint, options = {}) {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    librarianAuth: null,
+
+    setLibrarianCredentials(username, password) {
+        this.librarianAuth = "Basic " + btoa(
+            String.fromCharCode(
+                ...new TextEncoder().encode(`${username}:${password}`)
+            )
+        );
+    },
+
+    clearLibrarianCredentials() {
+        this.librarianAuth = null;
+    },
+
+    async request(endpoint, options = {}) {        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
-            headers: {
-                "Content-Type": "application/json",
-                ...(options.headers || {})
-            }
+          headers: {
+    "Content-Type": "application/json",
+    ...(this.librarianAuth
+        ? { "Authorization": this.librarianAuth }
+        : {}),
+    ...(options.headers || {})
+}
         });
 
         if (!response.ok) {

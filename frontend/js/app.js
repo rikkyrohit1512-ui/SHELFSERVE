@@ -29,9 +29,10 @@ const app = {
    * Initialize application on DOM ready
    */
   init() {
+    localStorage.removeItem('shelfsense_prototype_state');
     this.loadState();
     this.bindEvents();
-    this.setRole(this.state.currentRole || 'ADMIN', false);
+  this.setRole('STUDENT', false);
     this.syncInventoryStock();
     this.refreshOverdueCalculations();
     this.initAssistant();
@@ -43,11 +44,11 @@ const app = {
     try {
         console.log('Connecting to ShelfSense backend...');
 
-        const [booksData, membersData, loansData] = await Promise.all([
-            ShelfSenseAPI.getBooks(),
-            ShelfSenseAPI.getMembers(),
-            ShelfSenseAPI.getLoans()
-        ]);
+      const booksData = await ShelfSenseAPI.getBooks();
+
+const membersData = ShelfSenseAPI.librarianAuth ? await ShelfSenseAPI.getMembers() : [];
+const loansData = ShelfSenseAPI.librarianAuth ? await ShelfSenseAPI.getLoans() : [];
+
 
         // Convert backend book records to the frontend format
         this.state.books = booksData.map(book => ({
@@ -135,10 +136,10 @@ const app = {
       try {
         const parsed = JSON.parse(saved);
         this.state.books = parsed.books || [];
-        this.state.members = parsed.members || [];
-        this.state.transactions = parsed.transactions || [];
+        this.state.members = [];
+        this.state.transactions = [];
         this.state.categories = parsed.categories || [];
-        this.state.currentRole = parsed.currentRole || 'ADMIN';
+        this.state.currentRole = 'STUDENT';
         this.state.currentFloor = parsed.currentFloor || 'Ground Floor';
         this.state.selectedRackId = parsed.selectedRackId || 'CS-01';
         this.state.selectedBookId = parsed.selectedBookId || null;
@@ -162,10 +163,7 @@ const app = {
   saveState() {
     localStorage.setItem('shelfsense_prototype_state', JSON.stringify({
       books: this.state.books,
-      members: this.state.members,
-      transactions: this.state.transactions,
       categories: this.state.categories,
-      currentRole: this.state.currentRole,
       currentFloor: this.state.currentFloor,
       selectedRackId: this.state.selectedRackId,
       selectedBookId: this.state.selectedBookId
@@ -177,10 +175,10 @@ const app = {
    */
   resetStateToDefault() {
     this.state.books = JSON.parse(JSON.stringify(INITIAL_MOCK_DATA.books));
-    this.state.members = JSON.parse(JSON.stringify(INITIAL_MOCK_DATA.members));
-    this.state.transactions = JSON.parse(JSON.stringify(INITIAL_MOCK_DATA.transactions));
+    this.state.members = [];
+    this.state.transactions = [];
     this.state.categories = JSON.parse(JSON.stringify(INITIAL_MOCK_DATA.categories));
-    this.state.currentRole = 'ADMIN';
+    this.state.currentRole = 'STUDENT';
     this.state.currentFloor = 'Ground Floor';
     this.state.selectedRackId = 'CS-01';
     this.state.selectedBookId = 'BK-101';
@@ -238,8 +236,8 @@ const app = {
     const adminBtn = document.getElementById('roleAdminBtn');
     const studentBtn = document.getElementById('roleStudentBtn');
 
-    if (adminBtn) adminBtn.addEventListener('click', () => this.setRole('ADMIN'));
-    if (studentBtn) studentBtn.addEventListener('click', () => this.setRole('STUDENT'));
+    if (adminBtn) adminBtn.addEventListener('click', () => this.loginLibrarian());
+    if (studentBtn) studentBtn.addEventListener('click', () => this.logoutLibrarian());
 
     // Reset data button
     const resetBtn = document.getElementById('btnResetData');
@@ -247,7 +245,7 @@ const app = {
       resetBtn.addEventListener('click', () => {
         if (confirm('Reset all library books, members, transactions, and shelf maps back to default demo data?')) {
           this.resetStateToDefault();
-          this.setRole('ADMIN', false);
+          this.setRole('STUDENT', false);
           this.renderAll();
           this.showToast('Demo dataset & Shelf Map refreshed successfully!', 'success');
         }
@@ -325,7 +323,103 @@ const app = {
   /**
    * Switch Active User Role (Admin vs Student)
    */
+  async loginLibrarian() {
+    if (ShelfSenseAPI.librarianAuth) {
+      this.setRole('ADMIN');
+      return;
+    }
+
+    const existing = document.getElementById('librarianLoginOverlay');
+    if (existing) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'librarianLoginOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,.65);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px';
+
+    const dialog = document.createElement('div');
+    dialog.style.cssText = 'background:white;color:#172033;padding:30px;border-radius:16px;width:100%;max-width:390px;box-shadow:0 20px 60px rgba(0,0,0,.25)';
+
+    dialog.innerHTML = `
+      <h2 style="margin:0 0 8px;font-size:24px">Librarian Login</h2>
+      <p style="color:#64748b;margin-bottom:24px">Sign in to manage ShelfServe</p>
+      <form id="librarianLoginForm">
+        <label for="librarianUsername">Username</label>
+        <input id="librarianUsername" autocomplete="username" required
+          style="width:100%;padding:12px;margin:8px 0 18px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box">
+        <label for="librarianPassword">Password</label>
+        <input id="librarianPassword" type="password" autocomplete="current-password" required
+          style="width:100%;padding:12px;margin:8px 0 20px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box">
+        <p id="librarianLoginError" role="alert" style="color:#dc2626;font-size:13px;display:none"></p>
+        <button id="librarianSubmit" type="submit"
+          style="width:100%;padding:12px;background:#2563eb;color:white;border:0;border-radius:8px;cursor:pointer">
+          Sign In
+        </button>
+        <button id="librarianCancel" type="button"
+          style="width:100%;padding:12px;margin-top:8px;background:transparent;border:0;cursor:pointer">
+          Cancel
+        </button>
+      </form>
+    `;
+
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+
+    dialog.querySelector('#librarianCancel').addEventListener('click', close);
+
+    dialog.querySelector('#librarianLoginForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const username = dialog.querySelector('#librarianUsername').value;
+      const passwordInput = dialog.querySelector('#librarianPassword');
+      const password = passwordInput.value;
+      const submit = dialog.querySelector('#librarianSubmit');
+      const errorBox = dialog.querySelector('#librarianLoginError');
+
+      submit.disabled = true;
+      submit.textContent = 'Signing in...';
+      errorBox.style.display = 'none';
+
+      try {
+        ShelfSenseAPI.setLibrarianCredentials(username, password);
+        await ShelfSenseAPI.getMembers();
+
+        passwordInput.value = '';
+        close();
+        this.setRole('ADMIN');
+        await this.loadBackendData();
+        this.showToast('Librarian login successful', 'success');
+      } catch (error) {
+        ShelfSenseAPI.clearLibrarianCredentials();
+        passwordInput.value = '';
+        this.setRole('STUDENT', false);
+        console.error("ShelfServe librarian login error:", error);
+errorBox.textContent = error.status
+  ? `Login failed (HTTP ${error.status}): ${error.message}`
+  : `Login failed: ${error.message || "Network or browser error"}`;
+        errorBox.style.display = 'block';
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Sign In';
+      }
+    });
+
+    dialog.querySelector('#librarianUsername').focus();
+  },
+  logoutLibrarian() {
+    ShelfSenseAPI.clearLibrarianCredentials();
+    this.state.members = [];
+    this.state.transactions = [];
+    this.backendConnected = false;
+    this.setRole('STUDENT', false);
+    this.showToast('Switched to Student mode', 'info');
+  },
   setRole(role, notify = true) {
+    if (role === 'ADMIN' && !ShelfSenseAPI.librarianAuth) {
+      this.showToast('Librarian login required', 'error');
+      return;
+    }
     this.state.currentRole = role;
     const body = document.body;
     const adminBtn = document.getElementById('roleAdminBtn');
