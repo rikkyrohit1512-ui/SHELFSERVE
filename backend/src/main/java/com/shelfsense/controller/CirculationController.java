@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/circulation")
-@CrossOrigin(origins = "*")
+
 public class CirculationController {
 
     private final CirculationService circulationService;
