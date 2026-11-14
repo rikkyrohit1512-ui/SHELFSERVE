@@ -40,7 +40,7 @@ const app = {
     this.setupDateInputs();
     this.loadBackendData();
   },
-  async loadBackendData() {
+  async loadBackendData({ notify = true } = {}) {
     try {
         console.log('Connecting to ShelfSense backend...');
 
@@ -116,14 +116,20 @@ const loansData = ShelfSenseAPI.librarianAuth ? await ShelfSenseAPI.getLoans() :
         this.renderAll();
 
         console.log('ShelfSense backend connected successfully!');
-        this.showToast('Live database connected successfully!', 'success');
+        if (notify) {
+          this.showToast('Live database connected successfully!', 'success');
+        }
+        return true;
 
     } catch (error) {
         console.error('Backend connection failed:', error);
-        this.showToast(
-            'Backend connection failed. Showing saved demo data.',
-            'error'
-        );
+        if (notify) {
+          this.showToast(
+              'Backend connection failed. Showing saved demo data.',
+              'error'
+          );
+        }
+        return false;
     }
 },
 
@@ -384,25 +390,31 @@ const loansData = ShelfSenseAPI.librarianAuth ? await ShelfSenseAPI.getLoans() :
       try {
         ShelfSenseAPI.setLibrarianCredentials(username, password);
         await ShelfSenseAPI.getMembers();
-
-        passwordInput.value = '';
-        close();
-        this.setRole('ADMIN');
-        await this.loadBackendData();
-        this.showToast('Librarian login successful', 'success');
       } catch (error) {
         ShelfSenseAPI.clearLibrarianCredentials();
         passwordInput.value = '';
         this.setRole('STUDENT', false);
         console.error("ShelfServe librarian login error:", error);
-errorBox.textContent = error.status
-  ? `Login failed (HTTP ${error.status}): ${error.message}`
-  : `Login failed: ${error.message || "Network or browser error"}`;
+        errorBox.textContent = error.status
+          ? `Login failed (HTTP ${error.status}): ${error.message}`
+          : `Login failed: ${error.message || "Network or browser error"}`;
         errorBox.style.display = 'block';
+        return;
       } finally {
         submit.disabled = false;
         submit.textContent = 'Sign In';
       }
+
+      passwordInput.value = '';
+      close();
+      this.setRole('ADMIN');
+      const dataLoaded = await this.loadBackendData({ notify: false });
+      this.showToast(
+        dataLoaded
+          ? 'Librarian login successful.'
+          : 'Librarian login succeeded, but library data could not be loaded. Some information may be unavailable.',
+        dataLoaded ? 'success' : 'warning'
+      );
     });
 
     dialog.querySelector('#librarianUsername').focus();
